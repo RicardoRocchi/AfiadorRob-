@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Afiador Robô - Mapa Mental</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #000000;
+            padding: 10px;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #1a1a1a;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(255, 140, 0, 0.3);
+            border: 2px solid #ff8c00;
+            overflow-x: hidden;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #ff8c00;
+            margin-bottom: 30px;
+            font-size: 1.8em;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #ff8c00;
+            text-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+        }
+        
+        .mindmap {
+            margin: 20px 0;
+        }
+        
+        .node {
+            margin: 15px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .node-content {
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            user-select: none;
+        }
+        
+        .node-content:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(255, 140, 0, 0.4);
+        }
+        
+        .level-0 .node-content {
+            background: linear-gradient(135deg, #ff8c00 0%, #ff6600 100%);
+            color: white;
+            font-size: 1.3em;
+            font-weight: bold;
+            padding: 18px 25px;
+            border: 2px solid #ffaa00;
+        }
+        
+        .level-1 > .node-content {
+            background: #ff8c00;
+            color: white;
+            font-size: 1.1em;
+            border-left: 4px solid #ffaa00;
+        }
+        
+        .level-2 > .node-content {
+            background: #2a2a2a;
+            color: #ff8c00;
+            margin-left: 20px;
+            border-left: 4px solid #ff8c00;
+            border: 1px solid #ff8c00;
+        }
+        
+        .level-3 > .node-content {
+            background: #1a1a1a;
+            color: #ffffff;
+            margin-left: 40px;
+            border-left: 3px solid #ff8c00;
+            font-size: 0.95em;
+        }
+        
+        .toggle-icon {
+            font-size: 0.8em;
+            transition: transform 0.3s ease;
+            min-width: 20px;
+            color: inherit;
+        }
+        
+        .node.collapsed > .toggle-icon,
+        .node.collapsed > .node-content > .toggle-icon {
+            transform: rotate(-90deg);
+        }
+        
+        .children {
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+        }
+        
+        .node.collapsed > .children {
+            max-height: 0 !important;
+            opacity: 0;
+        }
+        
+        .node:not(.collapsed) > .children {
+            max-height: 10000px;
+            opacity: 1;
+        }
+        
+        .leaf > .node-content > .toggle-icon {
+            opacity: 0.3;
+        }
+        
+        .info {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: #2a2a2a;
+            border-radius: 8px;
+            color: #ff8c00;
+            font-size: 0.9em;
+            border: 1px solid #ff8c00;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+            
+            .container {
+                padding: 15px;
+                border-radius: 10px;
+            }
+            
+            h1 {
+                font-size: 1.2em;
+                margin-bottom: 20px;
+            }
+            
+            .level-0 .node-content {
+                font-size: 1em;
+                padding: 12px 15px;
+            }
+            
+            .level-1 > .node-content {
+                font-size: 0.95em;
+                padding: 10px 15px;
+            }
+            
+            .level-2 > .node-content {
+                margin-left: 10px;
+                font-size: 0.9em;
+                padding: 8px 12px;
+            }
+            
+            .level-3 > .node-content {
+                margin-left: 20px;
+                font-size: 0.85em;
+                padding: 8px 12px;
+            }
+            
+            .info {
+                font-size: 0.85em;
+                padding: 15px;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .container {
+                padding: 40px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .level-0 .node-content {
+                font-size: 1.5em;
+                padding: 20px 30px;
+            }
+            
+            .level-1 > .node-content {
+                font-size: 1.2em;
+                padding: 15px 25px;
+            }
+            
+            .level-2 > .node-content {
+                font-size: 1.05em;
+                padding: 12px 20px;
+            }
+            
+            .level-3 > .node-content {
+                font-size: 1em;
+                padding: 10px 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔪 Afiador Robô - A Revolução da Afiação</h1>
+        
+        <div class="mindmap" id="mindmap"></div>
+        
+        <div class="info">
+            💡 <strong>Dica:</strong> Clique nos itens para expandir/colapsar as informações
+        </div>
+    </div>
+
+    <script>
+        const data = {
+            id: "node_0",
+            text: "Afiador Robô - A Revolução da Afiação",
+            children: [
+                {
+                    id: "node_1",
+                    text: "Funcionalidade e Tecnologia",
+                    children: [
+                        {
+                            id: "node_7",
+                            text: "Afiação Praticamente Automática e Precisa",
+                            children: [
+                                { id: "node_27", text: "Garante ângulo e graus perfeitos" },
+                                { id: "node_28", text: "Segue formato do gume em offset" },
+                                { id: "node_29", text: "Bico estendido para afiar até o bico da faca" },
+                                { id: "node_30", text: "Não exige conhecimento prévio de afiação" }
+                            ]
+                        },
+                        {
+                            id: "node_8",
+                            text: "Preservação da Faca e Pedra",
+                            children: [
+                                { id: "node_31", text: "Respeita a geometria da faca (sem fazer 'barriga')" },
+                                { id: "node_32", text: "Facas duram até 3x mais" },
+                                { id: "node_33", text: "Distribui a afiação na extensão total da faca" },
+                                { id: "node_34", text: "Pedra de afiar dura até 6x mais (ou 10x mais)" }
+                            ]
+                        },
+                        {
+                            id: "node_9",
+                            text: "Compatibilidade",
+                            children: [
+                                { id: "node_35", text: "Usa pedra de afiar simples ou sofisticada" },
+                                { id: "node_36", text: "Transforma método difícil em fácil" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    id: "node_2",
+                    text: "Modelos Disponíveis",
+                    children: [
+                        {
+                            id: "node_10",
+                            text: "Afiador Flexível UNIVERSAL",
+                            children: [
+                                { id: "node_37", text: "Com jacaré 12\"" },
+                                { id: "node_38", text: "Para facas de 4\" a 12\"" }
+                            ]
+                        },
+                        {
+                            id: "node_11",
+                            text: "Afiador Flexível com Ímã",
+                            children: [
+                                { id: "node_39", text: "Para facas mais estreitas (a partir de 2,5 cm de largura)" },
+                                { id: "node_40", text: "4\" a 9\"" }
+                            ]
+                        },
+                        {
+                            id: "node_12",
+                            text: "Afiador Rígido com Ímã",
+                            children: [
+                                { id: "node_41", text: "Para Faca Affilata Tramontina 8\"" }
+                            ]
+                        },
+                        { id: "node_13", text: "Modelo futuro para canivetes e facas menores (flexível com imã)" }
+                    ]
+                },
+                {
+                    id: "node_3",
+                    text: "Características e Materiais",
+                    children: [
+                        {
+                            id: "node_14",
+                            text: "Materiais de Ponta",
+                            children: [
+                                { id: "node_42", text: "UHMW atóxico (guia deslizante)" },
+                                { id: "node_43", text: "15x mais resistente à abrasão que o aço" },
+                                { id: "node_44", text: "Borracha nitrílica atóxica" }
+                            ]
+                        },
+                        {
+                            id: "node_15",
+                            text: "Fixação",
+                            children: [
+                                { id: "node_45", text: "Acompanha 5 jacarés de poliacetal (mais prático)" },
+                                { id: "node_46", text: "Pode ser fixado com 10 ímãs de 10x4 mm (opcional)" }
+                            ]
+                        },
+                        {
+                            id: "node_16",
+                            text: "Durabilidade",
+                            children: [
+                                { id: "node_47", text: "Desgasta-se com o tempo, diminuindo o ângulo (funciona até gastar)" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    id: "node_4",
+                    text: "Instruções de Uso (Dicas Essenciais)",
+                    children: [
+                        {
+                            id: "node_17",
+                            text: "Força Mínima (Regra de Ouro)",
+                            children: [
+                                { id: "node_48", text: "Ideal: 200 g ou apenas o peso da faca" },
+                                { id: "node_49", text: "Força excessiva causa desgaste mais rápido do guia" }
+                            ]
+                        },
+                        {
+                            id: "node_18",
+                            text: "Manter a Pedra Sempre Molhada",
+                            children: [
+                                { id: "node_50", text: "Água lubrifica, remove metal e resfria o UHMW" },
+                                { id: "node_51", text: "Essencial para manter UHMW abaixo de 40°C" }
+                            ]
+                        },
+                        {
+                            id: "node_19",
+                            text: "Movimentos Lentos e Controlados",
+                            children: [
+                                { id: "node_52", text: "Baixa velocidade protege o guia do calor por atrito" }
+                            ]
+                        },
+                        {
+                            id: "node_20",
+                            text: "Cuidados Adicionais",
+                            children: [
+                                { id: "node_53", text: "Usar pedras de gramatura média-fina ou fina (ex: Carborundum 320)" },
+                                { id: "node_54", text: "Limpar a faca antes (seca e limpa) para evitar escorregamento da borracha" },
+                                { id: "node_55", text: "Não lavar em máquina de lavar louça" },
+                                { id: "node_56", text: "Afiar longe dos alimentos (higiene)" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    id: "node_5",
+                    text: "Benefícios e Garantias",
+                    children: [
+                        {
+                            id: "node_21",
+                            text: "Resultado",
+                            children: [
+                                { id: "node_57", text: "Facas viram uma navalha em segundos" },
+                                { id: "node_58", text: "Fio consistente e profissional" },
+                                { id: "node_59", text: "Recupera facas danificadas" }
+                            ]
+                        },
+                        {
+                            id: "node_22",
+                            text: "Aprovação",
+                            children: [
+                                { id: "node_60", text: "Mais de 500 restaurantes e entusiastas aprovam" },
+                                { id: "node_61", text: "Recomendado por Federação dos Cozinheiros Italianos" }
+                            ]
+                        },
+                        {
+                            id: "node_23",
+                            text: "Garantia",
+                            children: [
+                                { id: "node_62", text: "Satisfação garantida ou dinheiro de volta" },
+                                { id: "node_63", text: "Teste por 7 dias" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    id: "node_6",
+                    text: "Informações Institucionais",
+                    children: [
+                        {
+                            id: "node_24",
+                            text: "Inventor",
+                            children: [
+                                { id: "node_64", text: "Ricardo Rocchi" },
+                                { id: "node_65", text: "Contato: (11) 95421-8278 (WhatsApp)" }
+                            ]
+                        },
+                        {
+                            id: "node_25",
+                            text: "Patente",
+                            children: [
+                                { id: "node_66", text: "Depositada no Brasil (BR 10 2025 000674 0)" },
+                                { id: "node_67", text: "Depositada pelo escritório Tinoco Soares" },
+                                { id: "node_68", text: "Busca por parceiros internacionais" }
+                            ]
+                        },
+                        {
+                            id: "node_26",
+                            text: "Site",
+                            children: [
+                                { id: "node_69", text: "www.afiadordefacas.com" },
+                                { id: "node_70", text: "www.afiadorrobo.com.br" }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        function createNode(nodeData, level = 0) {
+            const hasChildren = nodeData.children && nodeData.children.length > 0;
+            const node = document.createElement('div');
+            node.className = `node level-${level} ${!hasChildren ? 'leaf' : ''}`;
+            
+            const content = document.createElement('div');
+            content.className = 'node-content';
+            
+            const icon = document.createElement('span');
+            icon.className = 'toggle-icon';
+            icon.textContent = hasChildren ? '▼' : '•';
+            content.appendChild(icon);
+            
+            const text = document.createElement('span');
+            text.textContent = nodeData.text;
+            content.appendChild(text);
+            
+            node.appendChild(content);
+            
+            if (hasChildren) {
+                const children = document.createElement('div');
+                children.className = 'children';
+                
+                nodeData.children.forEach(child => {
+                    children.appendChild(createNode(child, level + 1));
+                });
+                
+                node.appendChild(children);
+                
+                content.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    node.classList.toggle('collapsed');
+                });
+            }
+            
+            return node;
+        }
+
+        const mindmap = document.getElementById('mindmap');
+        mindmap.appendChild(createNode(data));
+    </script>
+</body>
+</html>
